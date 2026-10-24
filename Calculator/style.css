@@ -1,0 +1,152 @@
+:root {
+    --pink-50: #fff5f8;
+    --pink-100: #ffe3ec;
+    --pink-200: #ffc9da;
+    --pink-400: #f77fa6;
+    --pink-500: #ec5b8c;
+    --pink-600: #d4437a;
+    --pink-700: #b02f61;
+    --text: #4a1f33;
+    --radius: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 24px;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: linear-gradient(135deg, var(--pink-50), var(--pink-200));
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--pink-700);
+}
+
+/* Calculator card: input + buttons share the same width */
+#valeur {
+    width: 320px;
+    max-width: 100%;
+    padding: 20px 18px;
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: right;
+    color: var(--text);
+    background: #fff;
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(212, 67, 122, 0.18);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#valeur:focus {
+    border-color: var(--pink-400);
+    box-shadow: 0 10px 30px rgba(212, 67, 122, 0.28);
+}
+
+.buttons {
+    width: 320px;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    border-radius: 22px;
+    box-shadow: 0 20px 45px rgba(212, 67, 122, 0.22);
+}
+
+button {
+    aspect-ratio: 1;
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--pink-700);
+    background: #fff;
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 6px rgba(176, 47, 97, 0.12);
+    cursor: pointer;
+    transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    background: var(--pink-100);
+    box-shadow: 0 4px 12px rgba(176, 47, 97, 0.2);
+}
+
+button:active {
+    transform: scale(0.94);
+}
+
+/* Visible focus ring for keyboard (arrow key) navigation */
+button:focus-visible,
+button:focus {
+    outline: 3px solid var(--pink-400);
+    outline-offset: 2px;
+}
+
+/* Operators (+ - * =), the column on the right, and "/" */
+button:nth-child(4n),
+button:nth-child(19) {
+    color: #fff;
+    background: linear-gradient(145deg, var(--pink-400), var(--pink-600));
+    box-shadow: 0 4px 12px rgba(212, 67, 122, 0.35);
+}
+
+button:nth-child(4n):hover,
+button:nth-child(19):hover {
+    background: linear-gradient(145deg, var(--pink-500), var(--pink-700));
+}
+
+/* Clear button */
+button:first-child {
+    color: var(--pink-600);
+    background: var(--pink-100);
+    font-weight: 600;
+}
+
+/* Parentheses */
+button:nth-child(2),
+button:nth-child(3) {
+    background: var(--pink-50);
+}
+
+/* The empty spare key: keep it in the grid but make it discreet */
+button:empty {
+    background: transparent;
+    box-shadow: none;
+    cursor: default;
+}
+
+button:empty:hover {
+    background: transparent;
+    box-shadow: none;
+}
+
+@media (max-width: 380px) {
+    #valeur {
+        font-size: 1.6rem;
+    }
+
+    .buttons {
+        gap: 8px;
+        padding: 12px;
+    }
+}
