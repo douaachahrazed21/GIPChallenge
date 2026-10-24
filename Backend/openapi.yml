@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: Lost and Found Reports API
+  description: A simple API for submitting, searching, viewing and updating lost/found reports.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+tags:
+  - name: Reports
+    description: Lost and found reports
+
+paths:
+  /report:
+    post:
+      tags: [Reports]
+      summary: Submit a new report
+      operationId: createReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewReport"
+            example:
+              username: alice
+              title: Black leather wallet
+              type: lost
+      responses:
+        "200":
+          description: Report submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+              example:
+                message: Report submitted successfully
+        "400":
+          description: Invalid report data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: Invalid report data
+    patch:
+      tags: [Reports]
+      summary: Update a report
+      description: >
+        Updates the title and/or resolved status of a report. The report is
+        only modified if both `id` and `username` match an existing record.
+      operationId: updateReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReport"
+            example:
+              id: 1
+              username: alice
+              title: Black leather wallet (found!)
+              resolve: true
+      responses:
+        "200":
+          description: Report updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+              example:
+                message: Report updated successfully
+        "400":
+          description: Invalid report data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: Invalid report data
+
+  /report/{title}:
+    get:
+      tags: [Reports]
+      summary: Search reports by title
+      description: Returns all reports whose title contains the given text (case-insensitive partial match).
+      operationId: searchReportsByTitle
+      parameters:
+        - name: title
+          in: path
+          required: true
+          description: Text to search for within report titles
+          schema:
+            type: string
+          example: wallet
+      responses:
+        "200":
+          description: Matching reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+        "404":
+          description: No reports found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: No reports found
+
+  /report/view/{id}:
+    get:
+      tags: [Reports]
+      summary: View a report by ID
+      operationId: getReportById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique report ID
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: The requested report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "404":
+          description: No reports found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: No reports found
+
+components:
+  schemas:
+    ReportType:
+      type: string
+      enum: [lost, found]
+    NewReport:
+      type: object
+      required: [username, title, type]
+      properties:
+        username:
+          type: string
+        title:
+          type: string
+        type:
+          $ref: "#/components/schemas/ReportType"
+    UpdateReport:
+      type: object
+      required: [id, username]
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+          description: Must match the username that created the report
+        title:
+          type: string
+        resolve:
+          type: boolean
+    Report:
+      type: object
+      required: [id, username, title, type, resolve]
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: alice
+        title:
+          type: string
+          example: Black leather wallet
+        type:
+          $ref: "#/components/schemas/ReportType"
+        resolve:
+          type: integer
+          enum: [0, 1]
+          description: Resolved flag as stored in SQLite (0 = unresolved, 1 = resolved)
+          example: 0
+    Message:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
